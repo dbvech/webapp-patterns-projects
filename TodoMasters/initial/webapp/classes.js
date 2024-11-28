@@ -23,6 +23,21 @@ export class TodoItem {
     }
 }
 
+export class Memento {}
+
+class TodoListSnapshot extends Memento {
+    #list;
+
+    constructor(list) {
+        super();
+        this.#list = [...list];
+    }
+
+    restore(todoList) {
+        todoList.replaceList(new Set(this.#list));
+    }
+}
+
 export class TodoList {
     /** @type {Set<TodoItem>} */
     #data = new Set();
@@ -88,6 +103,24 @@ export class TodoList {
     replaceList(list) {
         this.#data = list;
         this.notify();
+    }
+
+    /**
+     * @returns {Memento} snapshot
+     */
+    makeSnapshot() {
+        return new TodoListSnapshot(this.items);
+    }
+
+    /**
+     * @param {Memento} snapshot
+     */
+    restore(snapshot) {
+        if (snapshot instanceof TodoListSnapshot) {
+            snapshot.restore(this);
+        } else {
+            throw new Error();
+        }
     }
 }
 
