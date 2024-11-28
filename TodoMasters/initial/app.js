@@ -29,6 +29,9 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
         CommandExecutor.execute(new Command(Commands.ADD));
     }
+    if ((e.metaKey || e.ctrlKey) && e.key === "z") {
+        CommandExecutor.execute(new Command(Commands.UNDO));
+    }
 });
 
 function renderList() {

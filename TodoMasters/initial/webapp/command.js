@@ -1,4 +1,5 @@
 import { TodoItem, TodoList } from "./classes.js";
+import { TodoHistory } from "./history.js";
 
 export class Command {
     /** @type {Commands[keyof Commands]} */
@@ -19,6 +20,7 @@ export class Command {
 export const Commands = /** @type {const} */ ({
     ADD: "add",
     DELETE: "delete",
+    UNDO: "undo",
 });
 
 export const CommandExecutor = {
@@ -42,6 +44,11 @@ export const CommandExecutor = {
             case Commands.DELETE: {
                 const [text] = command.args;
                 todoList.delete(text);
+                break;
+            }
+
+            case Commands.UNDO: {
+                TodoHistory.pop();
                 break;
             }
 
