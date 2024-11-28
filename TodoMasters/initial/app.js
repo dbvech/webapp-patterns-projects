@@ -1,22 +1,36 @@
+import { TodoList } from "./webapp/classes.js";
+import { Command, CommandExecutor, Commands } from "./webapp/command.js";
+
+const DOM = {};
+globalThis.DOM = DOM;
+
 document.addEventListener("DOMContentLoaded", () => {
-    const todoInput = document.getElementById("todo-input");
-    const addBtn = document.getElementById("add-btn");
-    const todoList = document.getElementById("todo-list");
+    DOM.todoInput = document.getElementById("todo-input");
+    DOM.addBtn = document.getElementById("add-btn");
+    DOM.todoList = document.getElementById("todo-list");
 
-    addBtn.addEventListener("click", () => {
-        const todoText = todoInput.value.trim();
-        if (todoText !== "") {
-            const listItem = document.createElement("li");
-            listItem.className = "todo-item";
-            listItem.innerHTML = `${todoText} <button class="delete-btn">Delete</button>`;
-            todoList.appendChild(listItem);
-            todoInput.value = "";
-        }
+    DOM.addBtn.addEventListener("click", () => {
+        CommandExecutor.execute(new Command(Commands.ADD));
     });
 
-    todoList.addEventListener("click", (event) => {
+    DOM.todoList.addEventListener("click", (event) => {
         if (event.target.classList.contains("delete-btn")) {
-            event.target.parentElement.remove();
+            const todoText = event.target.parentElement.dataset.todoText;
+            CommandExecutor.execute(new Command(Commands.DELETE, [todoText]));
         }
     });
+
+    TodoList.instance.subscribe(renderList);
 });
+
+function renderList() {
+    DOM.todoList.innerHTML = "";
+
+    TodoList.instance.items.forEach((todo) => {
+        const listItem = document.createElement("li");
+        listItem.className = "todo-item";
+        listItem.dataset.todoText = todo.text;
+        listItem.innerHTML = `${todo.text} <button class="delete-btn">Delete</button>`;
+        DOM.todoList.appendChild(listItem);
+    });
+}
