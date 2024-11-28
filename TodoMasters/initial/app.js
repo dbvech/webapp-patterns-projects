@@ -25,6 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
     AppStorage.load();
 });
 
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        CommandExecutor.execute(new Command(Commands.ADD));
+    }
+});
+
 function renderList() {
     DOM.todoList.innerHTML = "";
 
